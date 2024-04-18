@@ -1,5 +1,5 @@
-function Ship() {
-  let length
+function Ship(l) {
+  let length = l
   let hitted = 0
   return {
     length: length,
