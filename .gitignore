@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+
+# ESLint cache
+.eslintcache
+
+# Jest cache directory
+/.jest
+
+# Coverage directory
+/coverage
+
+# Dependency lock files
+package-lock.json
+yarn.lock
+
+# Editor directories and files
+.vscode/
+.idea/
+*.iml
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# npm error logs
+npm-debug.log*
+
+# Prettier cache
+.prettier-cache
