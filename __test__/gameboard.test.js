@@ -80,18 +80,18 @@ test('test missed attacks', () => {
     const res = (i - rem) / 10
     gameBoard.recieveAttack([rem, res])
   }
-  expect(gameBoard.missedAttacks).toBe([
+  expect(gameBoard.missedAttacks).toEqual([
     [8, 0],
     [9, 0],
-    [1, 0],
+    [0, 1],
     [1, 1],
-    [1, 2],
-    [1, 3],
-    [1, 4],
-    [1, 5],
-    [1, 6],
-    [1, 7],
-    [1, 8],
-    [1, 9]
+    [2, 1],
+    [3, 1],
+    [4, 1],
+    [5, 1],
+    [6, 1],
+    [7, 1],
+    [8, 1],
+    [9, 1]
   ])
 })
