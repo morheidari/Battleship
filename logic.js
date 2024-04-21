@@ -80,4 +80,10 @@ function GameBoard() {
   }
 }
 
-module.exports = { Ship, GameBoard }
+function Player() {
+  const type = 'real'
+  const gameBoard = GameBoard()
+  return { type, gameBoard }
+}
+
+module.exports = { Ship, GameBoard, Player }
