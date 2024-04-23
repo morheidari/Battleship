@@ -1,4 +1,4 @@
-const { GameBoard } = require('../logic.js')
+const { GameBoard } = require('../src/logic.js')
 
 test('put a ship of size 3 in (3,3) horizontaly', () => {
   const gameBoard = GameBoard()

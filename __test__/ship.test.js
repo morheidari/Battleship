@@ -1,4 +1,4 @@
-const { Ship } = require('../logic.js')
+const { Ship } = require('../src/logic.js')
 
 test('create a ship of length 3', () => {
   const ship = Ship(3)

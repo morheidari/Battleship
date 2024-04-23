@@ -1,4 +1,4 @@
-const { Player } = require('../logic.js')
+const { Player } = require('../src/logic.js')
 
 test('player is real', () => {
   const player = Player()
