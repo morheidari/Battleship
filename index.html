@@ -15,21 +15,75 @@
       <div class="boards">
         <div class="player">
           <h2>Your board</h2>
-          <div class="ships"></div>
+          <div class="ships">
+            <div class="ship-1">
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+            </div>
+            <div class="ship-2">
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+            </div>
+            <div class="ship-3">
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+            </div>
+            <div class="ship-4">
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+            </div>
+            <div class="ship-5">
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+            </div>
+          </div>
           <div class="board"></div>
         </div>
         <div class="opponent">
           <h2>Opponent's board</h2>
           <div class="board"></div>
-          <div class="ships"></div>
+          <div class="ships">
+            <div class="ship-1">
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+            </div>
+            <div class="ship-2">
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+            </div>
+            <div class="ship-3">
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+            </div>
+            <div class="ship-4">
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+            </div>
+            <div class="ship-5">
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+              <div class="fragment"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <script>
       const playerGrid = document.querySelector('.player>.board')
       const opponentGrid = document.querySelector('.opponent>.board')
-      const playerShips = document.querySelector('.player>.ships')
-      const opponentsShips = document.querySelector('.opponent>.ships')
 
       for (let i = 0; i < 100; i++) {
         const cell = document.createElement('div')
@@ -37,31 +91,6 @@
         playerGrid.appendChild(cell.cloneNode())
         opponentGrid.appendChild(cell.cloneNode())
       }
-      const ship2 = document.createElement('div')
-      ship2.classList.add('ship-2')
-      const ship3 = document.createElement('div')
-      ship3.classList.add('ship-3')
-      const ship4 = document.createElement('div')
-      ship4.classList.add('ship-4')
-      const ship5 = document.createElement('div')
-      ship5.classList.add('ship-5')
-      const ships = [
-        ship2.cloneNode(),
-        ship3.cloneNode(),
-        ship3.cloneNode(),
-        ship4.cloneNode(),
-        ship5.cloneNode()
-      ]
-      ships.forEach((ship) => {
-        const length = ship.className.slice(-1)
-        for (let i = 0; i < length; i++) {
-          const shipFragment = document.createElement('div')
-          shipFragment.classList.add('fragment')
-          ship.appendChild(shipFragment)
-        }
-        playerShips.appendChild(ship.cloneNode())
-        opponentsShips.appendChild(ship.cloneNode())
-      })
     </script>
   </body>
 </html>
