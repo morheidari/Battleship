@@ -136,3 +136,7 @@ h2 {
   background-color: #6e6e6e;
   cursor: pointer;
 }
+
+.ship {
+  background-color: black;
+}
