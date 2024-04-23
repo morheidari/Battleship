@@ -55,6 +55,8 @@ function GameBoard() {
     putShipInCordinates: function (ship, cordinates, orientation) {
       const l = ship.length
       if (isShipPlacable(ship, cordinates, orientation)) {
+        ship.position = cordinates
+        ship.orientation = orientation
         if (orientation === 'horizontal') {
           for (let i = 0; i < l; i++) {
             this.board[cordinates[0] + i][cordinates[1]] = ship
