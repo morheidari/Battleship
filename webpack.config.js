@@ -1,11 +1,13 @@
 const path = require('path')
 
 module.exports = {
+  mode: 'development',
   entry: './src/game.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'game.js'
   },
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
