@@ -1,4 +1,4 @@
-function Ship(l) {
+function Ship(l, label) {
   let length = l
   let hitted = 0
   return {
@@ -10,7 +10,8 @@ function Ship(l) {
     isSunk: function () {
       if (this.hitted >= this.length) return true
       return false
-    }
+    },
+    label
   }
 }
 
@@ -64,7 +65,7 @@ function GameBoard() {
     gameBoard.putShipInCordinates(ship, [c, r], convertBinaryToOrientation(o))
   }
   return {
-    ships: [Ship(2), Ship(3), Ship(3), Ship(4), Ship(5)],
+    ships: [Ship(2, 1), Ship(3, 2), Ship(3, 3), Ship(4, 4), Ship(5, 5)],
     board: board,
     missedAttacks: [],
     putShipInCordinates: function (ship, cordinates, orientation) {
