@@ -95,3 +95,17 @@ test('test missed attacks', () => {
     [9, 1]
   ])
 })
+
+test('place ships in random place', () => {
+  const gameBoard = GameBoard()
+  gameBoard.placeShipsInRandomPlaces()
+  expect(
+    gameBoard.board.reduce((a, c) => {
+      let t = c.reduce((acc, cur) => {
+        if (cur) return acc + 1
+        return acc
+      }, 0)
+      return a + t
+    }, 0)
+  ).toBe(17)
+})

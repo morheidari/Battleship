@@ -48,6 +48,21 @@ function GameBoard() {
       } else return false
     }
   }
+  function placeShipInRandomPlace(ship, gameBoard) {
+    let r = Math.floor(Math.random() * 10)
+    let c = Math.floor(Math.random() * 10)
+    let o = Math.floor(Math.random() * 2)
+    function convertBinaryToOrientation(b) {
+      if (b == 1) return 'horizontal'
+      return 'vertical'
+    }
+    while (!isShipPlacable(ship, [c, r], convertBinaryToOrientation(o))) {
+      r = Math.floor(Math.random() * 10)
+      c = Math.floor(Math.random() * 10)
+      o = Math.floor(Math.random() * 2)
+    }
+    gameBoard.putShipInCordinates(ship, [c, r], convertBinaryToOrientation(o))
+  }
   return {
     ships: [Ship(2), Ship(3), Ship(3), Ship(4), Ship(5)],
     board: board,
@@ -78,6 +93,12 @@ function GameBoard() {
     },
     areAllShipsSunk: function () {
       return this.ships.every((ship) => ship.isSunk())
+    },
+    placeShipsInRandomPlaces: function () {
+      const ships = this.ships
+      ships.forEach((ship) => {
+        placeShipInRandomPlace(ship, this)
+      })
     }
   }
 }
