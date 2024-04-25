@@ -67,6 +67,7 @@ function GameBoard() {
     ships: [Ship(2), Ship(3), Ship(3), Ship(4), Ship(5)],
     board: board,
     missedAttacks: [],
+    attacked: [],
     putShipInCordinates: function (ship, cordinates, orientation) {
       const l = ship.length
       if (isShipPlacable(ship, cordinates, orientation)) {
@@ -87,8 +88,10 @@ function GameBoard() {
       const c = this.board[cordinates[0]][cordinates[1]]
       if (c === null) {
         this.missedAttacks.push(cordinates)
+        this.attacked.push(cordinates)
       } else {
         c.hit()
+        this.attacked.push(cordinates)
       }
     },
     areAllShipsSunk: function () {
