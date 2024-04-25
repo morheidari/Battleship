@@ -86,12 +86,11 @@ function GameBoard() {
     },
     recieveAttack: function (cordinates) {
       const c = this.board[cordinates[0]][cordinates[1]]
+      this.attacked.push(cordinates)
       if (c === null) {
         this.missedAttacks.push(cordinates)
-        this.attacked.push(cordinates)
       } else {
         c.hit()
-        this.attacked.push(cordinates)
       }
     },
     areAllShipsSunk: function () {
