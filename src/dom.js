@@ -26,11 +26,11 @@ function Render(identity) {
       }
     }
   }
-  const aliveShips = [1, 2, 3, 4, 5]
+  let aliveShips = [1, 2, 3, 4, 5]
   const showShipsCondition = function (gameBoard) {
     const ships = gameBoard.ships
     aliveShips.forEach((label) => {
-      if (ships[label].isSunk()) {
+      if (ships[label - 1].isSunk()) {
         const outboardShip = document.querySelector(
           `.${id}>.ships>.ship-${label}`
         )
@@ -39,8 +39,6 @@ function Render(identity) {
       }
     })
   }
-  const missedAttacks = []
-  const succsessfullAttacks = []
   function createCrossSvg() {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
     svg.setAttribute('width', '100%')
@@ -84,4 +82,45 @@ function Render(identity) {
   return { showShipsPosition, showShipsCondition, showAttackResult }
 }
 
-module.exports = { Render }
+function Attack() {
+  function containArray(mainArray, array) {
+    return mainArray.some(
+      (arr) => JSON.stringify(arr) === JSON.stringify(array)
+    )
+  }
+  function generateRandomAttack(gameBoard) {
+    function generateRandomCordinates() {
+      return [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)]
+    }
+    let c = generateRandomCordinates()
+    while (containArray(gameBoard.attacked, c)) {
+      c = generateRandomCordinates()
+    }
+    return c
+  }
+  const attack = function (OgameBoard, PgameBoard) {
+    const renderC = Render('opponent')
+    const renderP = Render('player')
+    const board = Array.from(
+      document.querySelectorAll(`.opponent>.board>.cell`)
+    )
+    board.forEach((cell) => {
+      cell.addEventListener('click', (e) => {
+        const cellNumber = e.target.classList[1].replace(/cell/, '')
+        const c = cellNumber % 10
+        const r = (cellNumber - c) / 10
+        const cordinatesInOpponentBoard = [c, r]
+        const cordinatesInPlayerBoard = generateRandomAttack(PgameBoard)
+        OgameBoard.recieveAttack(cordinatesInOpponentBoard)
+        PgameBoard.recieveAttack(cordinatesInPlayerBoard)
+        renderC.showAttackResult(cordinatesInOpponentBoard, OgameBoard)
+        renderC.showShipsCondition(OgameBoard)
+        renderP.showAttackResult(cordinatesInPlayerBoard, PgameBoard)
+        renderP.showShipsCondition(PgameBoard)
+      })
+    })
+  }
+  return { attack }
+}
+
+module.exports = { Render, Attack }
