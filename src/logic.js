@@ -84,7 +84,7 @@ function GameBoard() {
         }
       } else return isShipPlacable(ship, cordinates, orientation)
     },
-    recieveAttack: function (cordinates) {
+    receiveAttack: function (cordinates) {
       const c = this.board[cordinates[0]][cordinates[1]]
       this.attacked.push(cordinates)
       if (c === null) {

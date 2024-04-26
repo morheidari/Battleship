@@ -47,7 +47,7 @@ test('recieve attack in a ship cordinate', () => {
   const gameBoard = GameBoard()
   const ship = gameBoard.ships[0]
   gameBoard.putShipInCordinates(ship, [0, 0], 'horizontal')
-  gameBoard.recieveAttack([1, 0])
+  gameBoard.receiveAttack([1, 0])
   expect(gameBoard.board[0][0]).toBe(ship)
   expect(gameBoard.board[1][0]).toBe(ship)
   expect(ship.hitted).toBe(1)
@@ -64,7 +64,7 @@ test('sank all the ships', () => {
   for (let i = 0; i < 20; i++) {
     const rem = i % 10
     const res = (i - rem) / 10
-    gameBoard.recieveAttack([rem, res])
+    gameBoard.receiveAttack([rem, res])
   }
   expect(gameBoard.areAllShipsSunk()).toBeTruthy()
 })
@@ -78,7 +78,7 @@ test('test missed attacks', () => {
   for (let i = 0; i < 20; i++) {
     const rem = i % 10
     const res = (i - rem) / 10
-    gameBoard.recieveAttack([rem, res])
+    gameBoard.receiveAttack([rem, res])
   }
   expect(gameBoard.missedAttacks).toEqual([
     [8, 0],

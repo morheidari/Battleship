@@ -13,6 +13,6 @@ test('player is computer', () => {
 
 test('player recieve an attack', () => {
   const player = Player()
-  player.gameBoard.recieveAttack([0, 0])
+  player.gameBoard.receiveAttack([0, 0])
   expect(player.gameBoard.missedAttacks).toEqual([[0, 0]])
 })
