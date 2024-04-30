@@ -84,6 +84,20 @@ function GameBoard() {
         }
       } else return isShipPlacable(ship, cordinates, orientation)
     },
+    removeShipFromCordinates: function (ship) {
+      const cordinates = ship.position
+      const orientation = ship.orientation
+      const l = ship.length
+      if (orientation === 'horizontal') {
+        for (let i = 0; i < l; i++) {
+          this.board[cordinates[0] + i][cordinates[1]] = null
+        }
+      } else {
+        for (let i = 0; i < l; i++) {
+          this.board[cordinates[0]][cordinates[1] + i] = null
+        }
+      }
+    },
     receiveAttack: function (cordinates) {
       const c = this.board[cordinates[0]][cordinates[1]]
       this.attacked.push(cordinates)
@@ -101,7 +115,8 @@ function GameBoard() {
       ships.forEach((ship) => {
         placeShipInRandomPlace(ship, this)
       })
-    }
+    },
+    isShipPlacable
   }
 }
 
