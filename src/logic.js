@@ -123,7 +123,84 @@ function GameBoard() {
 function Player() {
   const type = 'real'
   const gameBoard = GameBoard()
-  return { type, gameBoard }
+  function containArray(mainArray, array) {
+    return mainArray.some(
+      (arr) => JSON.stringify(arr) === JSON.stringify(array)
+    )
+  }
+
+  function isAttackable(cordinates, gameBoard) {
+    return !containArray(gameBoard.attacked, cordinates)
+  }
+
+  function generateRandomCoordinates() {
+    return [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)]
+  }
+
+  function generateRandomAttackCoordinate(gameBoard) {
+    let c = generateRandomCoordinates()
+    while (!isAttackable(c, gameBoard)) {
+      c = generateRandomCoordinates()
+    }
+    return c
+  }
+  let successfullAttacks = []
+
+  function nextCordinate(coordinates, direction) {
+    let [x, y] = coordinates
+
+    switch (direction) {
+      case 'up':
+        y += 1
+        break
+      case 'down':
+        y -= 1
+        break
+      case 'left':
+        x -= 1
+        break
+      default:
+        x += 1
+    }
+
+    return [x, y]
+  }
+
+  function generateNextAttack(gameBoard) {
+    if (successfullAttacks.length == 1) {
+      console.log(successfullAttacks)
+      const directions = ['up', 'down', 'right', 'left']
+      let nextDirectionIndex = Math.floor(Math.random() * 4)
+      while (
+        !isAttackable(
+          nextCordinate(successfullAttacks[0], directions[nextDirectionIndex]),
+          gameBoard
+        )
+      ) {
+        nextDirectionIndex = Math.floor(Math.random() * 4)
+      }
+      return nextCordinate(
+        successfullAttacks[0],
+        directions[nextDirectionIndex]
+      )
+    }
+    if (successfullAttacks.length >= 2) {
+      const d1 =
+        successfullAttacks.slice(-2)[1][0] - successfullAttacks.slice(-2)[0][0]
+      const d2 =
+        successfullAttacks.slice(-2)[1][1] - successfullAttacks.slice(-2)[0][1]
+      let next = [
+        successfullAttacks.slice(-2)[1][0] + d1,
+        successfullAttacks.slice(-2)[1][1] + d2
+      ]
+      if (isAttackable(next, gameBoard)) return next
+      next = [successfullAttacks[0][0] - d1, successfullAttacks[0][1] - d2]
+      if (isAttackable(next, gameBoard)) return next
+      return generateRandomAttack(gameBoard)
+    }
+  }
+
+  return { type, gameBoard, generateRandomAttackCoordinate }
 }
 
 module.exports = { Ship, GameBoard, Player }
