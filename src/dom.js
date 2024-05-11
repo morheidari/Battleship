@@ -5,12 +5,13 @@ function Render(identity) {
     cells.forEach((cell) => {
       const i = cell.classList[1]
       cell.className = `cell ${i}`
+      cell.innerHTML = ''
     })
   }
   const removeRotationIcon = function (startPoint) {
     const pos = startPoint[0] + startPoint[1] * 10
     const rotationCell = document.querySelector(`.${id}>.board>.cell${pos}`)
-    rotationCell.removeChild(rotationCell.firstChild)
+    rotationCell.innerHTML = ''
   }
   const addRotationIcon = function (startPoint) {
     const pos = startPoint[0] + startPoint[1] * 10
@@ -77,12 +78,13 @@ function Render(identity) {
   const showShipsCondition = function (gameBoard) {
     const ships = gameBoard.ships
     aliveShips.forEach((label) => {
+      const outboardShip = document.querySelector(
+        `.${id}>.ships>.ship-${label}`
+      )
       if (ships[label - 1].isSunk()) {
-        const outboardShip = document.querySelector(
-          `.${id}>.ships>.ship-${label}`
-        )
         outboardShip.classList.add('sunk')
-        aliveShips = aliveShips.filter((l) => l !== label)
+      } else {
+        outboardShip.classList.remove('sunk')
       }
     })
   }
@@ -122,8 +124,8 @@ function Render(identity) {
     const position = cordinates[0] + cordinates[1] * 10
     const cell = document.querySelector(`.${id}>.board>.cell${position}`)
     if (gameBoard.board[cordinates[0]][cordinates[1]])
-      cell.style.backgroundColor = 'rgb(230,0,0)'
-    else cell.style.backgroundColor = 'rgb(200,220,220)'
+      cell.classList.add('successful-attack')
+    else cell.classList.add('failed-attack')
     cell.appendChild(createCrossSvg())
   }
   return {
@@ -138,89 +140,77 @@ function Render(identity) {
   }
 }
 
-function Attack() {
-  function containArray(mainArray, array) {
-    return mainArray.some(
-      (arr) => JSON.stringify(arr) === JSON.stringify(array)
-    )
-  }
-
-  function isAttackable(cordinates, gameBoard) {
-    return !containArray(gameBoard.attacked, cordinates)
-  }
-
-  function generateRandomAttack(gameBoard) {
-    function generateRandomCordinates() {
-      return [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)]
+function startGame(playerOne, playerTwo) {
+  const display = document.querySelector('.display')
+  const startBtn = document.querySelector('.start')
+  const gameBoardOne = playerOne.gameBoard
+  const gameBoardTwo = playerTwo.gameBoard
+  const renderOne = Render('player')
+  const renderTwo = Render('opponent')
+  const cells = Array.from(document.querySelectorAll(`.opponent>.board>.cell`))
+  begin()
+  startBtn.addEventListener('click', (e) => {
+    if (e.target.textContent == 'Start') {
+      changeShipsPosition(playerOne, true)
+      e.target.textContent = 'Restart'
+      cells.forEach((cell) => {
+        cell.addEventListener('click', start, { once: true })
+      })
+    } else {
+      renderOne.cleanGrid()
+      renderTwo.cleanGrid()
+      e.target.textContent = 'Start'
+      begin()
     }
-    let c = generateRandomCordinates()
-    while (!isAttackable(c, gameBoard)) {
-      c = generateRandomCordinates()
-    }
-    return c
+  })
+  function start(e) {
+    const attackedPosition = Number(e.target.classList[1].replace(/cell/, ''))
+    const c = attackedPosition % 10
+    const r = (attackedPosition - c) / 10
+    const playerOneAttackedCordinates = [c, r]
+    const playerTwoAttackedCordinates =
+      playerTwo.generateRandomAttackCoordinate(gameBoardOne)
+    gameBoardTwo.receiveAttack(playerOneAttackedCordinates)
+    renderTwo.showAttackResult(playerOneAttackedCordinates, gameBoardTwo)
+    renderTwo.showShipsCondition(gameBoardTwo)
+    gameBoardOne.receiveAttack(playerTwoAttackedCordinates)
+    renderOne.showAttackResult(playerTwoAttackedCordinates, gameBoardOne)
+    renderOne.showShipsCondition(gameBoardOne)
+    endOfGame()
   }
-
-  let successfullAttacks = []
-
-  function nextCordinate(coordinates, direction) {
-    let [x, y] = coordinates
-
-    switch (direction) {
-      case 'up':
-        y += 1
-        break
-      case 'down':
-        y -= 1
-        break
-      case 'left':
-        x -= 1
-        break
-      default:
-        x += 1
-    }
-
-    return [x, y]
+  function announceWinner(winner) {
+    const message = winner == 'computer' ? 'computer wins' : 'you win'
+    display.textContent = message
   }
-
-  function generateNextAttack(gameBoard) {
-    if (successfullAttacks.length == 1) {
-      console.log(successfullAttacks)
-      const directions = ['up', 'down', 'right', 'left']
-      let nextDirectionIndex = Math.floor(Math.random() * 4)
-      while (
-        !isAttackable(
-          nextCordinate(successfullAttacks[0], directions[nextDirectionIndex]),
-          gameBoard
-        )
-      ) {
-        nextDirectionIndex = Math.floor(Math.random() * 4)
-      }
-      return nextCordinate(
-        successfullAttacks[0],
-        directions[nextDirectionIndex]
-      )
+  function removeEventListenersFromAllCells() {
+    cells.forEach((cell) => {
+      cell.removeEventListener('click', start)
+    })
+  }
+  function endOfGame() {
+    if (gameBoardOne.areAllShipsSunk()) {
+      removeEventListenersFromAllCells()
+      announceWinner('computer')
     }
-    if (successfullAttacks.length >= 2) {
-      const d1 =
-        successfullAttacks.slice(-2)[1][0] - successfullAttacks.slice(-2)[0][0]
-      const d2 =
-        successfullAttacks.slice(-2)[1][1] - successfullAttacks.slice(-2)[0][1]
-      let next = [
-        successfullAttacks.slice(-2)[1][0] + d1,
-        successfullAttacks.slice(-2)[1][1] + d2
-      ]
-      if (isAttackable(next, gameBoard)) return next
-      next = [successfullAttacks[0][0] - d1, successfullAttacks[0][1] - d2]
-      if (isAttackable(next, gameBoard)) return next
-      return generateRandomAttack(gameBoard)
+    if (gameBoardTwo.areAllShipsSunk()) {
+      removeEventListenersFromAllCells()
+      announceWinner('player')
     }
   }
-
-  return { attack }
+  function begin() {
+    removeEventListenersFromAllCells()
+    gameBoardOne.placeShipsInRandomPlaces()
+    gameBoardTwo.placeShipsInRandomPlaces()
+    renderOne.showShipsPosition(gameBoardOne)
+    renderOne.showShipsCondition(gameBoardOne)
+    renderTwo.showShipsCondition(gameBoardTwo)
+    changeShipsPosition(playerOne, false)
+  }
 }
 
-function changeShipsPosition(player) {
+function changeShipsPosition(player, done) {
   const display = document.querySelector('.display')
+  display.textContent = 'Move your ships by click!'
   const renderP = Render('player')
   const gameBoard = player.gameBoard
   const cells = Array.from(document.querySelectorAll('.player>.board>.cell'))
@@ -284,23 +274,33 @@ function changeShipsPosition(player) {
       }
     }
   }
-  cells.forEach((cell) => {
-    cell.addEventListener('click', replacement)
-  })
-  cells.forEach((cell) => {
-    cell.addEventListener('mouseover', (event) => {
-      renderP.cleanPosibleShipPosition()
-      if (clicked == 1) {
-        gameBoard.removeShipFromCordinates(shipObject)
-        const pos = Number(event.target.classList[1].replace(/cell/, ''))
-        const column = pos % 10
-        const row = (pos - column) / 10
-        if (gameBoard.isShipPlacable(shipObject, [column, row], orientation)) {
-          renderP.showPosibleShipPosition(pos, orientation, shipObject.length)
-        }
-      }
+  if (done) {
+    cells.forEach((cell) => {
+      let newCell = cell.cloneNode(true)
+      cell.parentNode.replaceChild(newCell, cell)
     })
-  })
+    display.textContent = 'Game is running, restart it whenever you want!'
+  } else {
+    cells.forEach((cell) => {
+      cell.addEventListener('click', replacement)
+    })
+    cells.forEach((cell) => {
+      cell.addEventListener('mouseover', (event) => {
+        renderP.cleanPosibleShipPosition()
+        if (clicked == 1) {
+          gameBoard.removeShipFromCordinates(shipObject)
+          const pos = Number(event.target.classList[1].replace(/cell/, ''))
+          const column = pos % 10
+          const row = (pos - column) / 10
+          if (
+            gameBoard.isShipPlacable(shipObject, [column, row], orientation)
+          ) {
+            renderP.showPosibleShipPosition(pos, orientation, shipObject.length)
+          }
+        }
+      })
+    })
+  }
 }
 
-module.exports = { Render, Attack, changeShipsPosition }
+module.exports = { Render, startGame, changeShipsPosition }

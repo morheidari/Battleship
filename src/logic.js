@@ -15,8 +15,8 @@ function Ship(l) {
 }
 
 function GameBoard() {
-  let board = []
   function setupBoard() {
+    let board = []
     for (let i = 0; i < 10; i++) {
       let row = []
       for (let j = 0; j < 10; j++) {
@@ -24,53 +24,56 @@ function GameBoard() {
       }
       board.push(row)
     }
+    return board
   }
-  setupBoard()
-  function isShipPlacable(ship, cordinates, orientation) {
-    const l = ship.length
-    if (orientation === 'horizontal') {
-      if (cordinates[0] + l - 1 < 10) {
-        for (let i = 0; i < l; i++) {
-          if (board[cordinates[0] + i][cordinates[1]] !== null) {
-            return false
-          }
-        }
-        return true
-      } else return false
-    } else {
-      if (cordinates[1] + l - 1 < 10) {
-        for (let i = 0; i < l; i++) {
-          if (board[cordinates[0]][cordinates[1] + i] !== null) {
-            return false
-          }
-        }
-        return true
-      } else return false
-    }
-  }
-  function placeShipInRandomPlace(ship, gameBoard) {
-    let r = Math.floor(Math.random() * 10)
-    let c = Math.floor(Math.random() * 10)
-    let o = Math.floor(Math.random() * 2)
-    function convertBinaryToOrientation(b) {
-      if (b == 1) return 'horizontal'
-      return 'vertical'
-    }
-    while (!isShipPlacable(ship, [c, r], convertBinaryToOrientation(o))) {
-      r = Math.floor(Math.random() * 10)
-      c = Math.floor(Math.random() * 10)
-      o = Math.floor(Math.random() * 2)
-    }
-    gameBoard.putShipInCordinates(ship, [c, r], convertBinaryToOrientation(o))
-  }
+  let board = setupBoard()
   return {
+    placeShipInRandomPlace: function (ship, gameBoard) {
+      let r = Math.floor(Math.random() * 10)
+      let c = Math.floor(Math.random() * 10)
+      let o = Math.floor(Math.random() * 2)
+      function convertBinaryToOrientation(b) {
+        if (b == 1) return 'horizontal'
+        return 'vertical'
+      }
+      while (
+        !this.isShipPlacable(ship, [c, r], convertBinaryToOrientation(o))
+      ) {
+        r = Math.floor(Math.random() * 10)
+        c = Math.floor(Math.random() * 10)
+        o = Math.floor(Math.random() * 2)
+      }
+      gameBoard.putShipInCordinates(ship, [c, r], convertBinaryToOrientation(o))
+    },
+    isShipPlacable: function (ship, cordinates, orientation) {
+      const l = ship.length
+      if (orientation === 'horizontal') {
+        if (cordinates[0] + l - 1 < 10) {
+          for (let i = 0; i < l; i++) {
+            if (this.board[cordinates[0] + i][cordinates[1]] !== null) {
+              return false
+            }
+          }
+          return true
+        } else return false
+      } else {
+        if (cordinates[1] + l - 1 < 10) {
+          for (let i = 0; i < l; i++) {
+            if (this.board[cordinates[0]][cordinates[1] + i] !== null) {
+              return false
+            }
+          }
+          return true
+        } else return false
+      }
+    },
     ships: [Ship(2), Ship(3), Ship(3), Ship(4), Ship(5)],
     board: board,
     missedAttacks: [],
     attacked: [],
     putShipInCordinates: function (ship, cordinates, orientation) {
       const l = ship.length
-      if (isShipPlacable(ship, cordinates, orientation)) {
+      if (this.isShipPlacable(ship, cordinates, orientation)) {
         ship.position = cordinates
         ship.orientation = orientation
         if (orientation === 'horizontal') {
@@ -82,19 +85,21 @@ function GameBoard() {
             this.board[cordinates[0]][cordinates[1] + i] = ship
           }
         }
-      } else return isShipPlacable(ship, cordinates, orientation)
+      } else return this.isShipPlacable(ship, cordinates, orientation)
     },
     removeShipFromCordinates: function (ship) {
       const cordinates = ship.position
       const orientation = ship.orientation
       const l = ship.length
-      if (orientation === 'horizontal') {
-        for (let i = 0; i < l; i++) {
-          this.board[cordinates[0] + i][cordinates[1]] = null
-        }
-      } else {
-        for (let i = 0; i < l; i++) {
-          this.board[cordinates[0]][cordinates[1] + i] = null
+      if (cordinates) {
+        if (orientation === 'horizontal') {
+          for (let i = 0; i < l; i++) {
+            this.board[cordinates[0] + i][cordinates[1]] = null
+          }
+        } else {
+          for (let i = 0; i < l; i++) {
+            this.board[cordinates[0]][cordinates[1] + i] = null
+          }
         }
       }
     },
@@ -111,12 +116,13 @@ function GameBoard() {
       return this.ships.every((ship) => ship.isSunk())
     },
     placeShipsInRandomPlaces: function () {
-      const ships = this.ships
+      this.board = setupBoard()
+      let ships = this.ships
       ships.forEach((ship) => {
-        placeShipInRandomPlace(ship, this)
+        ship.hitted = 0
+        this.placeShipInRandomPlace(ship, this)
       })
-    },
-    isShipPlacable
+    }
   }
 }
 

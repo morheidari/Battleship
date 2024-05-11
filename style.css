@@ -169,3 +169,13 @@ h2 {
 .rotation {
   cursor: pointer;
 }
+
+.failed-attack,
+.failed-attack > svg:hover {
+  background-color: rgb(200, 220, 220);
+}
+
+.successful-attack,
+.successful-attack > svg:hover {
+  background-color: rgb(230, 0, 0);
+}
